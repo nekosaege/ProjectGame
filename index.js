@@ -17,9 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
 function startGame() {
     console.log("Start Game clicked!");
   
-    startGameButton.style.display = 'none'; // Hide the start button
-    videoIntro.style.display = 'none';      // Hide the intro video
-    videoGame.style.display = 'block';      // Show the game video
+    startGameButton.style.display = 'none';
+    videoIntro.style.display = 'none';      
+    videoGame.style.display = 'block';  
     gameStatus.textContent = '';
   
     setTimeout(() => {
@@ -28,10 +28,9 @@ function startGame() {
   }
   
 
-// Função para ir para o próximo nível
 function nextLevel() {
   if (currentLevel === 1) {
-    // Simula a transição para o nível 2
+    
     videoGame.style.display = 'none';
     videoLevel2.style.display = 'block';
     gameStatus.textContent = '';
