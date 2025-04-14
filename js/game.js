@@ -28,7 +28,7 @@ class SimpleGame {
     setupEventListeners() {
         if (this.finalizarBtn) {
             this.finalizarBtn.addEventListener("click", () => {
-                window.location.href = "../html/victory.html";
+                window.location.href = "../victory.html";
             });
         }
 
@@ -111,7 +111,7 @@ class SimpleGame {
         setInterval(() => {
             if (this.playerLife <= 0) {
                 alert("Game Over");
-                window.location.href = "../html/gameover.html";
+                window.location.href = "../gameover.html";
             }
         }, 100);
     }

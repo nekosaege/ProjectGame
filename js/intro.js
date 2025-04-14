@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     introVideo.addEventListener("ended", () => {
         
         setTimeout(() => {
-            window.location.href = "../html/game.html"; 
+            window.location.href = "../game.html"; 
         }, 1000); 
     });
 });
