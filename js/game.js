@@ -1,76 +1,122 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const finalizarBtn = document.getElementById("videoGame");
+class SimpleGame {
+    constructor() {
+        this.player = document.getElementById("player");
+        this.finalizarBtn = document.getElementById("videoGame");
+        this.lifeDisplay = document.getElementById("lifeDisplay");
+        this.playerLife = 3;
+        this.step = 10;
 
-    if (finalizarBtn) {
-        finalizarBtn.addEventListener("click", () => {
-            window.location.href = "../html/victory.html";
-        });
+        this.obstacles = Array.from(document.querySelectorAll(".obstacle"));
+
+        this.init();
     }
 
-   
-    const player = document.getElementById("player");
-    const obstacle1 = document.getElementById("obstacle1"); 
-    const obstacle2 = document.getElementById("obstacle2"); 
-    let playerLife = 3; 
-    const lifeDisplay = document.getElementById("lifeDisplay"); 
+    init() {
+        this.updateLife();
+        this.setupEventListeners();
+        this.startGameLoop();
 
-    function updateLife() {
-        lifeDisplay.textContent = `Life: ${playerLife}`;
+        this.obstacles.forEach(obstacle => this.startObstacleMovement(obstacle));
     }
 
-    function detectCollision() {
-        const playerRect = player.getBoundingClientRect();
-        const obstacle1Rect = obstacle1.getBoundingClientRect();
-        const obstacle2Rect = obstacle2.getBoundingClientRect();
-
-        if (
-            playerRect.top < obstacle1Rect.bottom &&
-            playerRect.bottom > obstacle1Rect.top &&
-            playerRect.left < obstacle1Rect.right &&
-            playerRect.right > obstacle1Rect.left
-        ) {
-            playerLife -= 1; 
-            updateLife();
-        }
-
-        if (
-            playerRect.top < obstacle2Rect.bottom &&
-            playerRect.bottom > obstacle2Rect.top &&
-            playerRect.left < obstacle2Rect.right &&
-            playerRect.right > obstacle2Rect.left
-        ) {
-            playerLife += 1; 
-            updateLife();
+    updateLife() {
+        if (this.lifeDisplay) {
+            this.lifeDisplay.textContent = `Life: ${this.playerLife}`;
         }
     }
 
-    document.addEventListener("keydown", (event) => {
-        const step = 10;
-        let top = parseInt(window.getComputedStyle(player).top) || 0;
-        let left = parseInt(window.getComputedStyle(player).left) || 0;
+    setupEventListeners() {
+        if (this.finalizarBtn) {
+            this.finalizarBtn.addEventListener("click", () => {
+                window.location.href = "../html/victory.html";
+            });
+        }
+
+        document.addEventListener("keydown", (event) => this.handleMovement(event));
+    }
+
+    handleMovement(event) {
+        let top = parseInt(window.getComputedStyle(this.player).top) || 0;
+        let left = parseInt(window.getComputedStyle(this.player).left) || 0;
 
         switch (event.key) {
             case "ArrowUp":
-                player.style.top = `${top - step}px`;
+                this.player.style.top = `${top - this.step}px`;
                 break;
             case "ArrowDown":
-                player.style.top = `${top + step}px`;
+                this.player.style.top = `${top + this.step}px`;
                 break;
             case "ArrowLeft":
-                player.style.left = `${left - step}px`;
+                this.player.style.left = `${left - this.step}px`;
                 break;
             case "ArrowRight":
-                player.style.left = `${left + step}px`;
+                this.player.style.left = `${left + this.step}px`;
                 break;
         }
 
-        detectCollision();
-    });
+        this.detectCollision();
+    }
 
-    setInterval(() => {
-        if (playerLife <= 0) {
-            alert("Game Over");
-            window.location.href = "../html/gameover.html"; 
+    moveDown(obstacle) {
+        const maxTop = window.innerHeight - obstacle.offsetHeight;
+        let currentTop = parseInt(window.getComputedStyle(obstacle).top) || 0;
+        const speed = Math.floor(Math.random() * 3) + 16;
+
+        currentTop += speed;
+
+        if (currentTop >= maxTop) {
+            currentTop = 0;
+            const randomLeft = Math.floor(Math.random() * (window.innerWidth - obstacle.offsetWidth));
+            obstacle.style.left = `${randomLeft}px`;
         }
-    }, 100);
+
+        obstacle.style.top = `${currentTop}px`;
+    }
+
+    startObstacleMovement(obstacle) {
+        setInterval(() => {
+            this.moveDown(obstacle);
+            this.detectCollision(); 
+        }, 30); 
+    }
+
+    detectCollision() {
+        const playerRect = this.player.getBoundingClientRect();
+    
+        this.obstacles.forEach(obstacle => {
+            const obstacleRect = obstacle.getBoundingClientRect();
+    
+            if (
+                playerRect.top < obstacleRect.bottom &&
+                playerRect.bottom > obstacleRect.top &&
+                playerRect.left < obstacleRect.right &&
+                playerRect.right > obstacleRect.left
+            ) {
+                if (obstacle.classList.contains("bad")) {
+                    this.playerLife--;
+                    obstacle.style.top = `0px`;
+                } else {
+                    this.playerLife++;
+                    obstacle.remove();
+                    this.obstacles = this.obstacles.filter(o => o !== obstacle);
+                }
+    
+                this.updateLife();
+            }
+        });
+    }
+    
+
+    startGameLoop() {
+        setInterval(() => {
+            if (this.playerLife <= 0) {
+                alert("Game Over");
+                window.location.href = "../html/gameover.html";
+            }
+        }, 100);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    new SimpleGame();
 });
