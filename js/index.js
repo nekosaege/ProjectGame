@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     startButton.addEventListener("click", () => {
       console.log('Start button clicked'); 
-      window.location.href = "../intro.html"; 
+      window.location.href = "../game.html";
     });
   } else {
     console.error("Start button not found!"); 
